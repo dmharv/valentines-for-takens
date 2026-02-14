@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Eternal Valentine</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Cormorant Garamond', serif;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #0f0518 100%);
+        }
+        
+        .font-script { font-family: 'Dancing Script', cursive; }
+        .font-elegant { font-family: 'Playfair Display', serif; }
+        
+        /* Falling Hearts Animation */
+        .heart {
+            position: fixed;
+            top: -10%;
+            color: rgba(255, 182, 193, 0.6);
+            font-size: 20px;
+            animation: fall linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(110vh) rotate(360deg); }
+        }
+        
+        /* Envelope Animation */
+        .envelope-container {
+            perspective: 1000px;
+            width: 320px;
+            height: 220px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .envelope-container:hover {
+            transform: scale(1.05);
+        }
+        
+        .envelope {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .envelope.open {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope-front, .envelope-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 5px;
+        }
+        
+        .envelope-front {
+            background: linear-gradient(145deg, #8b0000, #5c0011);
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .envelope-back {
+            background: #f5e6d3;
+            transform: rotateX(180deg);
+            z-index: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(145deg, #a00000, #6b0011);
+            clip-path: polygon(0 0, 50% 100%, 100% 0);
+            transform-origin: top;
+            transition: transform 0.6s ease;
+            z-index: 3;
+        }
+        
+        .envelope.open .flap {
+            transform: rotateX(180deg);
+        }
+        
+        .wax-seal {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            position: absolute;
+            top: 35%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .wax-seal.red { background: radial-gradient(circle at 30% 30%, #ff4d4d, #990000); }
+        .wax-seal.gold { background: radial-gradient(circle at 30% 30%, #ffd700, #b8860b); }
+        .wax-seal.pink { background: radial-gradient(circle at 30% 30%, #ffb6c1, #db7093); }
+        .wax-seal.purple { background: radial-gradient(circle at 30% 30%, #da70d6, #8b008b); }
+        
+        .wax-seal i {
+            color: rgba(255,255,255,0.9);
+            font-size: 24px;
+        }
+        
+        /* Letter Content */
+        .letter-content {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.8s ease 0.5s;
+            text-align: center;
+        }
+        
+        .envelope.open + .letter-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Floral Borders */
+        .floral-border {
+            position: relative;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        .floral-border::before {
+            content: '';
+            position: absolute;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
+            border-radius: 15px;
+            z-index: -1;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .border-roses::before {
+            background-image: url('https://kimi-web-img.moonshot.cn/img/thumbs.dreamstime.com/b3edf60e0027bf3716af3379ff225e92bd7d4d1e.jpg');
+            opacity: 0.3;
+        }
+        
+        .border-vintage::before {
+            background-image: url('https://kimi-web-img.moonshot.cn/img/images.stockcake.com/b766558baffb531466110d012a29054643633e40.jpg');
+            opacity: 0.4;
+        }
+        
+        .border-hearts::before {
+            background: linear-gradient(45deg, #ffb6c1, #ffc0cb, #ffb6c1);
+            border: 3px solid #ff69b4;
+        }
+        
+        /* Map Pins */
+        .map-pin {
+            position: absolute;
+            color: #e74c3c;
+            font-size: 24px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+        
+        .map-pin:hover {
+            transform: scale(1.3);
+            z-index: 10;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .pin-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 12px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        
+        .map-pin:hover .pin-tooltip {
+            opacity: 1;
+        }
+        
+        /* Gallery */
+        .gallery-item {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1a0b2e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #ff69b4;
+            border-radius: 4px;
+        }
+        
+        /* Glow Effects */
+        .glow-text {
+            text-shadow: 0 0 20px rgba(255, 105, 180, 0.5);
+        }
+        
+        .btn-romantic {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            transition: all 0.3s ease;
+        }
+        .btn-romantic:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(238, 90, 111, 0.4);
+        }
+        
+        /* Input Styling */
+        .elegant-input {
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .elegant-input:focus {
+            outline: none;
+            border-color: #ff69b4;
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* Photo Upload Preview */
+        .photo-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white relative">
+
+    <!-- Falling Hearts Container -->
+    <div id="hearts-container"></div>
+
+    <!-- Music Toggle -->
+    <button id="musicToggle" class="fixed top-6 right-6 z-50 bg-white/10 backdrop-blur-md p-4 rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group">
+        <i class="fas fa-music text-pink-300 text-xl group-hover:scale-110 transition-transform"></i>
+        <span class="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-black/80 px-3 py-1 rounded text-sm whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">Play Melody</span>
+    </button>
+
+    <!-- Main Container -->
+    <div class="container mx-auto px-4 py-8 relative z-10 max-w-6xl">
+        
+        <!-- Header -->
+        <header class="text-center mb-12">
+            <h1 class="font-elegant text-5xl md:text-7xl mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-300 via-rose-400 to-purple-400 glow-text">
+                Happy Valentine's Day
+            </h1>
+            <p class="text-xl text-pink-200 font-light italic">A digital love letter crafted just for you</p>
+        </header>
+
+        <!-- Countdown Timer -->
+        <div class="bg-white/5 backdrop-blur-lg rounded-2xl p-6 mb-12 border border-white/10 max-w-2xl mx-auto">
+            <h2 class="text-center text-2xl mb-4 font-script text-pink-300">Counting the moments until we're together</h2>
+            <div class="grid grid-cols-4 gap-4 text-center" id="countdown">
+                <div class="bg-black/20 rounded-lg p-3">
+                    <div class="text-3xl font-bold text-rose-400" id="days">00</div>
+                    <div class="text-xs uppercase tracking-wider text-gray-400">Days</div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-3">
+                    <div class="text-3xl font-bold text-rose-400" id="hours">00</div>
+                    <div class="text-xs uppercase tracking-wider text-gray-400">Hours</div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-3">
+                    <div class="text-3xl font-bold text-rose-400" id="minutes">00</div>
+                    <div class="text-xs uppercase tracking-wider text-gray-400">Minutes</div>
+                </div>
+                <div class="bg-black/20 rounded-lg p-3">
+                    <div class="text-3xl font-bold text-rose-400" id="seconds">00</div>
+                    <div class="text-xs uppercase tracking-wider text-gray-400">Seconds</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wax Seal Selection -->
+        <div class="mb-8 text-center">
+            <h3 class="text-lg mb-3 text-pink-200">Choose Your Seal</h3>
+            <div class="flex justify-center gap-4 flex-wrap">
+                <button onclick="changeSeal('red')" class="w-12 h-12 rounded-full bg-red-600 border-2 border-white/30 hover:scale-110 transition-transform shadow-lg" title="Classic Red"></button>
+                <button onclick="changeSeal('gold')" class="w-12 h-12 rounded-full bg-yellow-500 border-2 border-white/30 hover:scale-110 transition-transform shadow-lg" title="Royal Gold"></button>
+                <button onclick="changeSeal('pink')" class="w-12 h-12 rounded-full bg-pink-400 border-2 border-white/30 hover:scale-110 transition-transform shadow-lg" title="Soft Pink"></button>
+                <button onclick="changeSeal('purple')" class="w-12 h-12 rounded-full bg-purple-500 border-2 border-white/30 hover:scale-110 transition-transform shadow-lg" title="Mystic Purple"></button>
+            </div>
+        </div>
+
+        <!-- Envelope Section -->
+        <div class="flex flex-col items-center mb-16">
+            <div class="envelope-container" onclick="toggleEnvelope()">
+                <div class="envelope" id="envelope">
+                    <div class="envelope-front">
+                        <div class="flap"></div>
+                        <div class="wax-seal red" id="waxSeal">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="text-white/80 font-script text-2xl mt-12">Open Me</div>
+                    </div>
+                    <div class="envelope-back">
+                        <i class="fas fa-heart text-red-500 text-4xl mb-2"></i>
+                        <p class="text-gray-700 font-script text-xl">With Love</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Letter Content (Revealed when opened) -->
+            <div class="letter-content mt-8 max-w-lg w-full" id="letterContent" style="display: none;">
+                <div class="bg-[#f5e6d3] text-gray-800 p-8 rounded-lg shadow-2xl transform rotate-1">
+                    <div class="border-2 border-red-200 border-dashed p-6 rounded">
+                        <p class="font-script text-3xl text-red-800 mb-4 leading-relaxed" id="displayMessage">
+                            My Dearest Love,<br><br>
+                            Every moment with you is a treasure I hold dear...
+                        </p>
+                        <p class="text-right font-script text-2xl text-red-700 mt-6">Forever Yours</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Input -->
+        <div class="max-w-2xl mx-auto mb-16 bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10">
+            <h3 class="text-2xl font-script text-pink-300 mb-4 text-center">Write Your Message</h3>
+            <textarea id="personalMessage" rows="4" class="w-full elegant-input rounded-lg p-4 font-script text-xl resize-none" placeholder="Type your romantic message here..."></textarea>
+            <button onclick="updateMessage()" class="mt-4 w-full btn-romantic text-white py-3 rounded-lg font-semibold tracking-wide">
+                <i class="fas fa-pen-fancy mr-2"></i>Seal Your Letter
+            </button>
+        </div>
+
+        <!-- Photo Gallery with Border Selection -->
+        <div class="mb-16">
+            <h2 class="text-3xl font-elegant text-center mb-8 text-pink-300">Our Cherished Memories</h2>
+            
+            <!-- Border Selection -->
+            <div class="flex justify-center gap-4 mb-6 flex-wrap">
+                <button onclick="changeBorder('roses')" class="px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/20">
+                    <i class="fas fa-spa mr-2"></i>Rose Garden
+                </button>
+                <button onclick="changeBorder('vintage')" class="px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/20">
+                    <i class="fas fa-leaf mr-2"></i>Vintage Bloom
+                </button>
+                <button onclick="changeBorder('hearts')" class="px-4 py-2 bg-white/10 rounded-full hover:bg-white/20 transition-colors border border-white/20">
+                    <i class="fas fa-heart mr-2"></i>Sweet Hearts
+                </button>
+            </div>
+
+            <div class="floral-border border-roses max-w-4xl mx-auto" id="galleryContainer">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6" id="photoGallery">
+                    <div class="gallery-item bg-gray-200 rounded-lg overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=400&h=300&fit=crop" alt="Memory 1" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item bg-gray-200 rounded-lg overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1522673607200-164d1b6ce486?w=400&h=300&fit=crop" alt="Memory 2" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="gallery-item bg-gray-200 rounded-lg overflow-hidden relative group">
+                        <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?w=400&h=300&fit=crop" alt="Memory 3" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <label class="cursor-pointer bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-6 py-3 rounded-full transition-all transform hover:scale-105 shadow-lg">
+                        <i class="fas fa-camera mr-2"></i>Add Photo
+                        <input type="file" accept="image/*" multiple class="hidden" onchange="handlePhotoUpload(event)">
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secret Poem Generator -->
+        <div class="max-w-2xl mx-auto mb-16 text-center">
+            <button onclick="generatePoem()" class="btn-romantic text-white px-8 py-4 rounded-full text-lg font-semibold shadow-lg hover:shadow-pink-500/50 transition-all mb-6">
+                <i class="fas fa-magic mr-2"></i>Generate Secret Poem
+            </button>
+            <div id="poemDisplay" class="hidden bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-pink-300/30">
+                <i class="fas fa-quote-left text-pink-400 text-3xl mb-4"></i>
+                <p class="font-script text-2xl text-pink-100 leading-relaxed italic" id="poemText"></p>
+                <i class="fas fa-quote-right text-pink-400 text-3xl mt-4"></i>
+            </div>
+        </div>
+
+        <!-- Memory Map -->
+        <div class="max-w-4xl mx-auto mb-16">
+            <h2 class="text-3xl font-elegant text-center mb-8 text-pink-300">Map of Our Memories</h2>
+            <div class="relative bg-[#e8d5c4] rounded-2xl overflow-hidden shadow-2xl h-96 border-8 border-[#d4c4b0]">
+                <!-- Stylized Map Background -->
+                <div class="absolute inset-0 opacity-30" style="background-image: url('data:image/svg+xml,%3Csvg width=\'100\' height=\'100\' viewBox=\'0 0 100 100\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z\' fill=\'%239C92AC\' fill-opacity=\'0.1\' fill-rule=\'evenodd\'/%3E%3C/svg%3E');"></div>
+                
+                <!-- Map Pins -->
+                <div class="map-pin" style="top: 30%; left: 20%;" onclick="showMemory('First Meeting')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pin-tooltip">Where we first met</div>
+                </div>
+                <div class="map-pin" style="top: 50%; left: 50%;" onclick="showMemory('First Date')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pin-tooltip">Our first date</div>
+                </div>
+                <div class="map-pin" style="top: 40%; left: 75%;" onclick="showMemory('First Kiss')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pin-tooltip">Our first kiss</div>
+                </div>
+                <div class="map-pin" style="top: 70%; left: 35%;" onclick="showMemory('Special Place')">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pin-tooltip">Our special place</div>
+                </div>
+                
+                <!-- Add Pin Button -->
+                <button onclick="addNewPin()" class="absolute bottom-4 right-4 bg-red-600 text-white p-3 rounded-full shadow-lg hover:bg-red-700 transition-colors" title="Add Memory">
+                    <i class="fas fa-plus"></i>
+                </button>
+                
+                <div class="absolute top-4 left-4 bg-white/90 px-4 py-2 rounded-lg shadow text-gray-800 font-semibold">
+                    <i class="fas fa-compass mr-2 text-red-600"></i>Our Love Map
+                </div>
+            </div>
+            <p class="text-center text-pink-200 mt-4 text-sm">Click on hearts to reveal memories • Click + to add new locations</p>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-pink-300/60 text-sm pb-8">
+            <p class="font-script text-lg">Made with <i class="fas fa-heart text-red-500"></i> for you</p>
+        </footer>
+    </div>
+
+    <script>
+        // Create Falling Hearts
+        function createHearts() {
+            const container = document.getElementById('hearts-container');
+            const heartSymbols = ['❤', '💕', '💖', '💗', '💓', '💝'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.innerHTML = heartSymbols[Math.floor(Math.random() * heartSymbols.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                container.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 7000);
+            }, 300);
+        }
+        
+        createHearts();
+        
+        // Countdown Timer
+        function updateCountdown() {
+            const valentinesDay = new Date('February 14, 2026 00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = valentinesDay - now;
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // Envelope Functions
+        let isOpen = false;
+        
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            const letterContent = document.getElementById('letterContent');
+            isOpen = !isOpen;
+            
+            if (isOpen) {
+                envelope.classList.add('open');
+                setTimeout(() => {
+                    letterContent.style.display = 'block';
+                }, 600);
+                playSound('open');
+            } else {
+                envelope.classList.remove('open');
+                letterContent.style.display = 'none';
+            }
+        }
+        
+        function changeSeal(color) {
+            const seal = document.getElementById('waxSeal');
+            seal.className = `wax-seal ${color}`;
+        }
+        
+        function updateMessage() {
+            const message = document.getElementById('personalMessage').value;
+            if (message.trim()) {
+                document.getElementById('displayMessage').innerHTML = message.replace(/\n/g, '<br>');
+                if (!isOpen) {
+                    toggleEnvelope();
+                }
+            }
+        }
+        
+        // Border Functions
+        function changeBorder(type) {
+            const container = document.getElementById('galleryContainer');
+            container.className = `floral-border border-${type} max-w-4xl mx-auto`;
+        }
+        
+        // Photo Upload
+        function handlePhotoUpload(event) {
+            const files = event.target.files;
+            const gallery = document.getElementById('photoGallery');
+            
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const div = document.createElement('div');
+                    div.className = 'gallery-item bg-gray-200 rounded-lg overflow-hidden relative group animate-fade-in';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Memory" class="w-full h-48 object-cover">
+                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <i class="fas fa-heart text-white text-2xl"></i>
+                        </div>
+                        <button onclick="this.parentElement.remove()" class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
+                    `;
+                    gallery.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Poem Generator
+        const poems = [
+            "In your eyes, I find my home,<br>Through every storm, I'll never roam.<br>Your love is the compass that guides my way,<br>Forever with you, day by day.",
+            
+            "Like stars that dance in midnight skies,<br>Your love illuminates my eyes.<br>No distance far, no ocean wide,<br>Could ever keep me from your side.",
+            
+            "Roses are red, violets are blue,<br>But none are as sweet as time spent with you.<br>My heart is a lock, and you hold the key,<br>Together forever, just you and me.",
+            
+            "In the garden of love, you are my rose,<br>More beautiful as each day goes.<br>Your petals of kindness, your stem of strength,<br>Make life with you the perfect length.",
+            
+            "If I could count the ways I love thee,<br>I'd count the waves upon the sea.<br>Infinite, endless, deep and true,<br>My heart beats only, my love, for you."
+        ];
+        
+        function generatePoem() {
+            const display = document.getElementById('poemDisplay');
+            const text = document.getElementById('poemText');
+            const randomPoem = poems[Math.floor(Math.random() * poems.length)];
+            
+            text.innerHTML = randomPoem;
+            display.classList.remove('hidden');
+            display.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        
+        // Map Functions
+        function showMemory(location) {
+            const memories = {
+                'First Meeting': 'The day our eyes first met, and the world stood still...',
+                'First Date': 'Nervous smiles and butterflies, the start of our forever...',
+                'First Kiss': 'When time stopped and fireworks ignited...',
+                'Special Place': 'Where our souls whispered secrets to each other...'
+            };
+            
+            alert(memories[location] || 'A beautiful memory shared here');
+        }
+        
+        function addNewPin() {
+            const map = document.querySelector('.relative.bg-\\[\\#e8d5c4\\]');
+            const name = prompt('Name this memory location:');
+            if (name) {
+                const pin = document.createElement('div');
+                pin.className = 'map-pin';
+                pin.style.top = (Math.random() * 60 + 20) + '%';
+                pin.style.left = (Math.random() * 60 + 20) + '%';
+                pin.innerHTML = `
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="pin-tooltip">${name}</div>
+                `;
+                pin.onclick = () => alert(`Memory: ${name}\nA new chapter in our love story`);
+                map.appendChild(pin);
+            }
+        }
+        
+        // Audio Context for Piano Melody
+        let audioContext = null;
+        let isPlaying = false;
+        let oscillator = null;
+        let gainNode = null;
+        
+        const melody = [
+            { note: 523.25, duration: 0.4 }, // C5
+            { note: 587.33, duration: 0.4 }, // D5
+            { note: 659.25, duration: 0.4 }, // E5
+            { note: 698.46, duration: 0.6 }, // F5
+            { note: 659.25, duration: 0.4 }, // E5
+            { note: 587.33, duration: 0.4 }, // D5
+            { note: 523.25, duration: 0.8 }, // C5
+            { note: 0, duration: 0.2 },      // Rest
+            { note: 659.25, duration: 0.4 }, // E5
+            { note: 698.46, duration: 0.4 }, // F5
+            { note: 783.99, duration: 0.4 }, // G5
+            { note: 880.00, duration: 0.6 }, // A5
+            { note: 783.99, duration: 0.4 }, // G5
+            { note: 698.46, duration: 0.4 }, // F5
+            { note: 659.25, duration: 0.8 }  // E5
+        ];
+        
+        document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+        
+        function toggleMusic() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            if (isPlaying) {
+                stopMusic();
+            } else {
+                playMusic();
+            }
+        }
+        
+        function playMusic() {
+            isPlaying = true;
+            document.querySelector('#musicToggle i').className = 'fas fa-volume-up text-pink-300 text-xl';
+            
+            let currentNote = 0;
+            
+            function playNextNote() {
+                if (!isPlaying) return;
+                
+                const note = melody[currentNote];
+                if (note.note > 0) {
+                    oscillator = audioContext.createOscillator();
+                    gainNode = audioContext.createGain();
+                    
+                    oscillator.connect(gainNode);
+                    gainNode.connect(audioContext.destination);
+                    
+                    oscillator.frequency.value = note.note;
+                    oscillator.type = 'sine';
+                    
+                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + note.duration);
+                    
+                    oscillator.start(audioContext.currentTime);
+                    oscillator.stop(audioContext.currentTime + note.duration);
+                }
+                
+                currentNote = (currentNote + 1) % melody.length;
+                setTimeout(playNextNote, note.duration * 1000);
+            }
+            
+            playNextNote();
+        }
+        
+        function stopMusic() {
+            isPlaying = false;
+            document.querySelector('#musicToggle i').className = 'fas fa-music text-pink-300 text-xl';
+            if (oscillator) {
+                oscillator.stop();
+            }
+        }
+        
+        function playSound(type) {
+            if (!audioContext) return;
+            
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            
+            if (type === 'open') {
+                osc.frequency.setValueAtTime(400, audioContext.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioContext.currentTime + 0.1);
+                gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+                osc.start(audioContext.currentTime);
+                osc.stop(audioContext.currentTime + 0.3);
+            }
+        }
+        
+        // Add fade-in animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in {
+                animation: fadeIn 0.5s ease-out;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
